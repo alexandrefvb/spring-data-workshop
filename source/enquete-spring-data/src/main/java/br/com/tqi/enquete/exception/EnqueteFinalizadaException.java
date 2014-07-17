@@ -5,9 +5,9 @@ package br.com.tqi.enquete.exception;
  */
 public class EnqueteFinalizadaException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public EnqueteFinalizadaException() {
-		super("A enquete est\u00e1 ativa e n\u00e3o pode ser atualizada.");
-	}
+    public EnqueteFinalizadaException() {
+	super("A enquete est\u00e1 ativa e n\u00e3o pode ser atualizada.");
+    }
 }

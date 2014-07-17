@@ -9,60 +9,60 @@ import org.springframework.data.domain.Page;
 
 public abstract class ResourceList<R extends Resource, T> extends Resource {
 
-	private List<R> resourceList;
+    private List<R> resourceList;
 
-	private String uriTemplate;
+    private String uriTemplate;
 
-	private Page<T> page;
+    private Page<T> page;
 
-	protected ResourceList(Page<T> entityPage, String uriTemplate) {
-		this.resourceList = new ArrayList<R>(entityPage.getContent().size());
-		this.uriTemplate = uriTemplate;
-		this.page = entityPage;
-		populateResourceList(entityPage);
-		addSelfLink();
-		addNavigationLinks();
+    protected ResourceList(Page<T> entityPage, String uriTemplate) {
+	this.resourceList = new ArrayList<R>(entityPage.getContent().size());
+	this.uriTemplate = uriTemplate;
+	this.page = entityPage;
+	populateResourceList(entityPage);
+	addSelfLink();
+	addNavigationLinks();
+    }
+
+    private void addSelfLink() {
+	add(new Link(uriFor(this.page.getNumber())));
+    }
+
+    private String uriFor(int pageNumber) {
+	return String.format(uriTemplate, pageNumber,
+		this.page.getSize());
+    }
+
+    private void addNavigationLinks() {
+	if (this.page.hasNext()) {
+	    add(new Link("next", uriFor(this.page.getNumber() + 1)));
 	}
-
-	private void addSelfLink() {
-		add(new Link(uriFor(this.page.getNumber())));
+	if (this.page.hasPrevious()) {
+	    add(new Link("previous", uriFor(this.page.getNumber() - 1)));
 	}
+    }
 
-	private String uriFor(int pageNumber) {
-		return String.format(uriTemplate, pageNumber,
-				this.page.getSize());
-	}
+    protected List<R> resourceList() {
+	return this.resourceList;
+    }
 
-	private void addNavigationLinks() {
-		if (this.page.hasNext()) {
-			add(new Link("next", uriFor(this.page.getNumber() + 1)));
+    @SuppressWarnings("unchecked")
+    private Class<R> resourceType() {
+	return (Class<R>) ((ParameterizedType) getClass()
+		.getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    private void populateResourceList(Page<T> entityPage) {
+	try {
+	    if (!entityPage.getContent().isEmpty()) {
+		Constructor<R> constructor = resourceType().getConstructor(
+			entityPage.getContent().get(0).getClass());
+		for (T model : entityPage) {
+		    this.resourceList.add(constructor.newInstance(model));
 		}
-		if (this.page.hasPrevious()) {
-			add(new Link("previous", uriFor(this.page.getNumber() - 1)));
-		}
+	    }
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
 	}
-
-	protected List<R> resourceList() {
-		return this.resourceList;
-	}
-
-	@SuppressWarnings("unchecked")
-	private Class<R> resourceType() {
-		return (Class<R>) ((ParameterizedType) getClass()
-				.getGenericSuperclass()).getActualTypeArguments()[0];
-	}
-
-	private void populateResourceList(Page<T> entityPage) {
-		try {
-			if (!entityPage.getContent().isEmpty()) {
-				Constructor<R> constructor = resourceType().getConstructor(
-						entityPage.getContent().get(0).getClass());
-				for (T model : entityPage) {
-					this.resourceList.add(constructor.newInstance(model));
-				}
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    }
 }

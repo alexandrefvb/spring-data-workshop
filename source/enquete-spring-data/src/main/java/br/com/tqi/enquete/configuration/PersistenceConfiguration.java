@@ -20,39 +20,39 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 class PersistenceConfiguration {
 
-	@Bean
-	public DataSource dataSource() {
-		BasicDataSource ds = new BasicDataSource();
-		ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-		ds.setUrl("jdbc:derby:enquetedb;create=true");
-		return ds;
-	}
+    @Bean
+    public DataSource dataSource() {
+	BasicDataSource ds = new BasicDataSource();
+	ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+	ds.setUrl("jdbc:derby:enquetedb;create=true");
+	return ds;
+    }
 
-	@Bean
-	public EntityManagerFactory entityManagerFactory() {
+    @Bean
+    public EntityManagerFactory entityManagerFactory() {
 
-		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setGenerateDdl(true);
-		vendorAdapter.setShowSql(true);
-		vendorAdapter.setDatabase(Database.DERBY);
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		factory.setJpaVendorAdapter(vendorAdapter);
-		factory.setPackagesToScan("br.com.tqi.enquete");
-		factory.setDataSource(dataSource());
-		factory.afterPropertiesSet();
+	HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+	vendorAdapter.setGenerateDdl(true);
+	vendorAdapter.setShowSql(true);
+	vendorAdapter.setDatabase(Database.DERBY);
+	LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+	factory.setJpaVendorAdapter(vendorAdapter);
+	factory.setPackagesToScan("br.com.tqi.enquete");
+	factory.setDataSource(dataSource());
+	factory.afterPropertiesSet();
 
-		return factory.getObject();
-	}
+	return factory.getObject();
+    }
 
-	@Bean
-	public PlatformTransactionManager transactionManager() {
-		JpaTransactionManager txManager = new JpaTransactionManager();
-		txManager.setEntityManagerFactory(entityManagerFactory());
-		return txManager;
-	}
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+	JpaTransactionManager txManager = new JpaTransactionManager();
+	txManager.setEntityManagerFactory(entityManagerFactory());
+	return txManager;
+    }
 
-	@Bean
-	public HibernateExceptionTranslator hibernateExceptionTranslator() {
-		return new HibernateExceptionTranslator();
-	}
+    @Bean
+    public HibernateExceptionTranslator hibernateExceptionTranslator() {
+	return new HibernateExceptionTranslator();
+    }
 }

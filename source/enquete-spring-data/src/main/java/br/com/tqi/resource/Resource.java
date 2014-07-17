@@ -5,13 +5,13 @@ import java.util.List;
 
 public abstract class Resource {
 
-	private List<Link> links = new ArrayList<Link>();
+    private List<Link> links = new ArrayList<Link>();
 
-	public List<Link> getLinks() {
-		return links;
-	}
+    public List<Link> getLinks() {
+	return links;
+    }
 
-	protected void add(Link link) {
-		this.links.add(link);
-	}
+    protected void add(Link link) {
+	this.links.add(link);
+    }
 }

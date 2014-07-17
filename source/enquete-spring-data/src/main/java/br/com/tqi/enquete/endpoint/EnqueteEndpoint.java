@@ -33,106 +33,106 @@ import br.com.tqi.enquete.resource.EnquetesResource;
 @RequestMapping(EnqueteResource.URI)
 public class EnqueteEndpoint {
 
-	@Autowired
-	private EnqueteService service;
+    @Autowired
+    private EnqueteService service;
 
-	@RequestMapping(method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EnquetesResource find(
-			@RequestParam(value = "pergunta", required = false) String pergunta,
-			@PageableDefault(page = 0, size = 10) Pageable pageable)
-			throws UnsupportedEncodingException {
-		return new EnquetesResource(this.service.find(pergunta, pageable),
-				buildUri(pergunta, EnqueteResource.URI));
-	}
+    @RequestMapping(method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public EnquetesResource find(
+	    @RequestParam(value = "pergunta", required = false) String pergunta,
+	    @PageableDefault(page = 0, size = 10) Pageable pageable)
+	    throws UnsupportedEncodingException {
+	return new EnquetesResource(this.service.find(pergunta, pageable),
+		buildUri(pergunta, EnqueteResource.URI));
+    }
 
-	@RequestMapping(value = "/ativas", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EnquetesResource findActive(
-			@RequestParam(value = "pergunta", required = false) String pergunta,
-			@PageableDefault(page = 0, size = 10) Pageable pageable)
-			throws UnsupportedEncodingException {
-		return new EnquetesResource(
-				this.service.findActive(pergunta, pageable), buildUri(pergunta,
-						EnqueteResource.URI + "/ativas"));
-	}
+    @RequestMapping(value = "/ativas", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public EnquetesResource findActive(
+	    @RequestParam(value = "pergunta", required = false) String pergunta,
+	    @PageableDefault(page = 0, size = 10) Pageable pageable)
+	    throws UnsupportedEncodingException {
+	return new EnquetesResource(
+		this.service.findActive(pergunta, pageable), buildUri(pergunta,
+			EnqueteResource.URI + "/ativas"));
+    }
 
-	@RequestMapping(value = "/finalizadas", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EnquetesResource findFinished(
-			@RequestParam(value = "pergunta", required = false) String pergunta,
-			@PageableDefault(page = 0, size = 10) Pageable pageable)
-			throws UnsupportedEncodingException {
-		return new EnquetesResource(this.service.findFinished(pergunta,
-				pageable), buildUri(pergunta, EnqueteResource.URI
-				+ "/finalizadas"));
-	}
+    @RequestMapping(value = "/finalizadas", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public EnquetesResource findFinished(
+	    @RequestParam(value = "pergunta", required = false) String pergunta,
+	    @PageableDefault(page = 0, size = 10) Pageable pageable)
+	    throws UnsupportedEncodingException {
+	return new EnquetesResource(this.service.findFinished(pergunta,
+		pageable), buildUri(pergunta, EnqueteResource.URI
+		+ "/finalizadas"));
+    }
 
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ResponseStatus(HttpStatus.CREATED)
-	public EnqueteResource create(@RequestBody Enquete enquete)
-			throws EnqueteInvalidaException {
-		return new EnqueteResource(this.service.create(enquete));
-	}
+    @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @ResponseStatus(HttpStatus.CREATED)
+    public EnqueteResource create(@RequestBody Enquete enquete)
+	    throws EnqueteInvalidaException {
+	return new EnqueteResource(this.service.create(enquete));
+    }
 
-	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EnqueteResource get(@PathVariable("id") Long id)
-			throws EnqueteNaoEncontradaException {
-		return new EnqueteResource(this.service.load(id));
-	}
+    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public EnqueteResource get(@PathVariable("id") Long id)
+	    throws EnqueteNaoEncontradaException {
+	return new EnqueteResource(this.service.load(id));
+    }
 
-	@RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public EnqueteResource put(@PathVariable("id") Long id,
-			@RequestBody Enquete data) throws EnqueteNaoEncontradaException,
-			EnqueteAtivaException, EnqueteFinalizadaException,
-			EnqueteInvalidaException {
-		return new EnqueteResource(this.service.update(id, data));
-	}
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+    public EnqueteResource put(@PathVariable("id") Long id,
+	    @RequestBody Enquete data) throws EnqueteNaoEncontradaException,
+	    EnqueteAtivaException, EnqueteFinalizadaException,
+	    EnqueteInvalidaException {
+	return new EnqueteResource(this.service.update(id, data));
+    }
 
-	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable("id") Long id)
-			throws EnqueteNaoEncontradaException, EnqueteAtivaException {
-		this.service.delete(id);
-	}
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id)
+	    throws EnqueteNaoEncontradaException, EnqueteAtivaException {
+	this.service.delete(id);
+    }
 
-	@RequestMapping(value = "{id}/voto", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void vote(@PathVariable("id") Long id, @RequestBody Opcao opcao)
-			throws EnqueteNaoEncontradaException, EnqueteInativaException,
-			OpcaoNaoEncontradaException {
-		this.service.vote(id, opcao.getTexto());
-	}
+    @RequestMapping(value = "{id}/voto", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void vote(@PathVariable("id") Long id, @RequestBody Opcao opcao)
+	    throws EnqueteNaoEncontradaException, EnqueteInativaException,
+	    OpcaoNaoEncontradaException {
+	this.service.vote(id, opcao.getTexto());
+    }
 
-	@ExceptionHandler({ EnqueteInvalidaException.class,
-			OpcaoNaoEncontradaException.class })
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public String badRequestExceptionHandler(Exception e) {
-		return e.getMessage();
-	}
+    @ExceptionHandler({ EnqueteInvalidaException.class,
+	    OpcaoNaoEncontradaException.class })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String badRequestExceptionHandler(Exception e) {
+	return e.getMessage();
+    }
 
-	@ExceptionHandler({ EnqueteNaoEncontradaException.class })
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public String notFoundExceptionHandler(Exception e) {
-		return e.getMessage();
-	}
+    @ExceptionHandler({ EnqueteNaoEncontradaException.class })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String notFoundExceptionHandler(Exception e) {
+	return e.getMessage();
+    }
 
-	@ExceptionHandler({ EnqueteAtivaException.class,
-			EnqueteInativaException.class, EnqueteFinalizadaException.class })
-	@ResponseStatus(HttpStatus.CONFLICT)
-	public String conflictExceptionHandler(Exception e) {
-		return e.getMessage();
-	}
+    @ExceptionHandler({ EnqueteAtivaException.class,
+	    EnqueteInativaException.class, EnqueteFinalizadaException.class })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String conflictExceptionHandler(Exception e) {
+	return e.getMessage();
+    }
 
-	private String buildUri(String pergunta, String uri)
-			throws UnsupportedEncodingException {
-		StringBuilder sb = new StringBuilder();
-		sb.append(uri);
-		if (pergunta == null) {
-			sb.append("?page=%s&size=%s");
-		} else {
-			sb.append("?pergunta=")
-					.append(URLEncoder.encode(pergunta, "UTF-8"))
-					.append("&page=%s&size=%s");
-		}
-		return sb.toString();
+    private String buildUri(String pergunta, String uri)
+	    throws UnsupportedEncodingException {
+	StringBuilder sb = new StringBuilder();
+	sb.append(uri);
+	if (pergunta == null) {
+	    sb.append("?page=%s&size=%s");
+	} else {
+	    sb.append("?pergunta=")
+		    .append(URLEncoder.encode(pergunta, "UTF-8"))
+		    .append("&page=%s&size=%s");
 	}
+	return sb.toString();
+    }
 
 }
