@@ -9,6 +9,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +25,15 @@ public class SpringMVCConfiguration extends WebMvcConfigurerAdapter {
 	MappingJackson2HttpMessageConverter e = new MappingJackson2HttpMessageConverter();
 	converters.add(e);
 	e.setObjectMapper(createObjectMapper());
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	registry.addResourceHandler("/js/**").addResourceLocations("/js/");
+	registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+	registry.addResourceHandler("/**/*.html").addResourceLocations("/");
+	registry.addResourceHandler("/fonts/**").addResourceLocations("/fonts/");
+	registry.addResourceHandler("/images/**").addResourceLocations("/images/");
     }
 
     @Override
