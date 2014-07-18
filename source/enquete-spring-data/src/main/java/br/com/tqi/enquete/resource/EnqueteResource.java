@@ -5,7 +5,7 @@ import java.util.List;
 
 import br.com.tqi.enquete.Enquete;
 import br.com.tqi.enquete.Opcao;
-import br.com.tqi.resource.Link;
+import br.com.tqi.resource.LinkBuilder;
 import br.com.tqi.resource.Method;
 import br.com.tqi.resource.Resource;
 
@@ -14,20 +14,29 @@ import br.com.tqi.resource.Resource;
  */
 public class EnqueteResource extends Resource {
 
-    public static final String URI = "/enquetes";
+    public static final String URI = "enquetes";
 
     private Enquete enquete;
 
     public EnqueteResource(Enquete enquete) {
 	this.enquete = enquete;
-	String href = URI + "/" + enquete.getId();
-	add(new Link(href));
+	// Constrói um linkbuilder com /enquetes/{id}
+	LinkBuilder linkBuilder = new LinkBuilder().addPathSegments(URI,
+		enquete.getId());
+	// Cria o link self
+	add(linkBuilder.build());
 	if (enquete.isActive()) {
-	    add(new Link("votar", href + "/voto", Method.POST));
+	    // Cria o link votar
+	    add(new LinkBuilder().addPathSegments(URI,
+		    enquete.getId().toString(), "voto").withRel("votar")
+		    .withMethod(Method.POST).build());
 	} else {
-	    add(new Link("apagar", href, Method.DELETE));
+	    // Cria o link apagar
+	    add(linkBuilder.withRel("apagar").withMethod(Method.DELETE).build());
 	    if (!enquete.isFinished()) {
-		add(new Link("atualizar", href, Method.PUT));
+		// Cria o link atualizar
+		add(linkBuilder.withRel("atualizar").withMethod(Method.PUT)
+			.build());
 	    }
 	}
     }

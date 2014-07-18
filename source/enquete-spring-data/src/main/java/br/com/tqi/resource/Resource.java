@@ -1,17 +1,17 @@
 package br.com.tqi.resource;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public abstract class Resource {
 
-    private List<Link> links = new ArrayList<Link>();
+    private Map<String, Link> links = new LinkedHashMap<String, Link>();
 
-    public List<Link> getLinks() {
+    public Map<String, Link> getLinks() {
 	return links;
     }
 
     protected void add(Link link) {
-	this.links.add(link);
+	this.links.put(link.getRel(), link);
     }
 }

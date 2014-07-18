@@ -1,7 +1,6 @@
 package br.com.tqi.enquete.endpoint;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -41,8 +40,7 @@ public class EnqueteEndpoint {
 	    @RequestParam(value = "pergunta", required = false) String pergunta,
 	    @PageableDefault(page = 0, size = 10) Pageable pageable)
 	    throws UnsupportedEncodingException {
-	return new EnquetesResource(this.service.find(pergunta, pageable),
-		buildUri(pergunta, EnqueteResource.URI));
+	return new EnquetesResource(this.service.find(pergunta, pageable));
     }
 
     @RequestMapping(value = "/ativas", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -50,9 +48,9 @@ public class EnqueteEndpoint {
 	    @RequestParam(value = "pergunta", required = false) String pergunta,
 	    @PageableDefault(page = 0, size = 10) Pageable pageable)
 	    throws UnsupportedEncodingException {
+
 	return new EnquetesResource(
-		this.service.findActive(pergunta, pageable), buildUri(pergunta,
-			EnqueteResource.URI + "/ativas"));
+		this.service.findActive(pergunta, pageable));
     }
 
     @RequestMapping(value = "/finalizadas", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -61,8 +59,7 @@ public class EnqueteEndpoint {
 	    @PageableDefault(page = 0, size = 10) Pageable pageable)
 	    throws UnsupportedEncodingException {
 	return new EnquetesResource(this.service.findFinished(pergunta,
-		pageable), buildUri(pergunta, EnqueteResource.URI
-		+ "/finalizadas"));
+		pageable));
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -120,19 +117,4 @@ public class EnqueteEndpoint {
     public String conflictExceptionHandler(Exception e) {
 	return e.getMessage();
     }
-
-    private String buildUri(String pergunta, String uri)
-	    throws UnsupportedEncodingException {
-	StringBuilder sb = new StringBuilder();
-	sb.append(uri);
-	if (pergunta == null) {
-	    sb.append("?page=%s&size=%s");
-	} else {
-	    sb.append("?pergunta=")
-		    .append(URLEncoder.encode(pergunta, "UTF-8"))
-		    .append("&page=%s&size=%s");
-	}
-	return sb.toString();
-    }
-
 }

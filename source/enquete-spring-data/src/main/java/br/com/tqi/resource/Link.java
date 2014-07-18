@@ -1,5 +1,10 @@
 package br.com.tqi.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
 public class Link {
 
     private String rel;
@@ -8,20 +13,20 @@ public class Link {
 
     private Method method;
 
-    public Link(String href) {
-	this("self", href);
-    }
+    private String consumes;
 
-    public Link(String rel, String href) {
-	this(rel, href, Method.GET);
-    }
+    private String produces;
 
-    public Link(String rel, String href, Method method) {
+    Link(String rel, String href, Method method, String consumes,
+	    String produces) {
 	this.rel = rel;
 	this.href = href;
 	this.method = method;
+	this.consumes = consumes;
+	this.produces = produces;
     }
 
+    @JsonIgnore
     public String getRel() {
 	return rel;
     }
@@ -32,5 +37,13 @@ public class Link {
 
     public Method getMethod() {
 	return method;
+    }
+
+    public String getConsumes() {
+	return consumes;
+    }
+
+    public String getProduces() {
+	return produces;
     }
 }

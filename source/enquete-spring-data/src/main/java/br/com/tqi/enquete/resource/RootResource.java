@@ -1,6 +1,6 @@
 package br.com.tqi.enquete.resource;
 
-import br.com.tqi.resource.Link;
+import br.com.tqi.resource.LinkBuilder;
 import br.com.tqi.resource.Method;
 import br.com.tqi.resource.Resource;
 
@@ -9,11 +9,11 @@ import br.com.tqi.resource.Resource;
  */
 public class RootResource extends Resource {
 
-    public static final String URI = "/";
-
     public RootResource() {
-	add(new Link(URI));
-	add(new Link("enquetes", EnqueteResource.URI));
-	add(new Link("nova-enquete", EnqueteResource.URI, Method.POST));
+	LinkBuilder linkBuilder = new LinkBuilder();
+	add(linkBuilder.buildSelfFromCurrentRequest());
+	add(linkBuilder.withRel("enquetes")
+		.withPathSegments(EnqueteResource.URI).build());
+	add(linkBuilder.withRel("nova-enquete").withMethod(Method.POST).build());
     }
 }
