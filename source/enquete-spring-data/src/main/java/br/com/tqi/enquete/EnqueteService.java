@@ -18,92 +18,100 @@ import br.com.tqi.enquete.exception.OpcaoNaoEncontradaException;
 @Transactional(readOnly = true)
 public class EnqueteService {
 
-    @Autowired
-    private EnqueteRepository repository;
+	@Autowired
+	private EnqueteRepository repository;
 
-    public Page<Enquete> find(String pergunta, Pageable pageable) {
-	if (pergunta == null) {
-	    return this.repository.findAll(pageable);
+	public Page<Enquete> find(String pergunta, Pageable pageable) {
+		if (pergunta == null) {
+			return this.repository.findAll(pageable);
+		}
+		return this.repository.findByPerguntaContaining(pergunta, pageable);
 	}
-	return this.repository.findByPerguntaContaining(pergunta, pageable);
-    }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = { EnqueteInvalidaException.class })
-    public Enquete update(Long id, Enquete data)
-	    throws EnqueteNaoEncontradaException, EnqueteAtivaException,
-	    EnqueteFinalizadaException, EnqueteInvalidaException {
-	Enquete e = load(id);
-	if (e.isActive()) {
-	    throw new EnqueteAtivaException();
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = { EnqueteInvalidaException.class })
+	public Enquete update(Long id, Enquete data)
+			throws EnqueteNaoEncontradaException, EnqueteAtivaException,
+			EnqueteFinalizadaException, EnqueteInvalidaException {
+		Enquete e = load(id);
+		if (e.isActive()) {
+			throw new EnqueteAtivaException();
+		}
+		if (e.isFinished()) {
+			throw new EnqueteFinalizadaException();
+		}
+		if (data.getPergunta() != null) {
+			e.setPergunta(data.getPergunta());
+		}
+		if (data.getInicio() != null) {
+			e.setInicio(data.getInicio());
+		}
+		if (data.getFim() != null) {
+			e.setFim(data.getFim());
+		}
+		if (data.getOpcoes() != null) {
+			e.getOpcoes().clear();
+			e.getOpcoes().addAll(data.getOpcoes());
+		}
+		e.validate();
+		// ao sair do método transacionado as alterações serão persistidas
+		return e;
 	}
-	if (e.isFinished()) {
-	    throw new EnqueteFinalizadaException();
-	}
-	if (data.getPergunta() != null) {
-	    e.setPergunta(data.getPergunta());
-	}
-	if (data.getInicio() != null) {
-	    e.setInicio(data.getInicio());
-	}
-	if (data.getFim() != null) {
-	    e.setFim(data.getFim());
-	}
-	if (data.getOpcoes() != null) {
-	    e.getOpcoes().clear();
-	    e.getOpcoes().addAll(data.getOpcoes());
-	}
-	e.validate();
-	// ao sair do método transacionado as alterações serão persistidas
-	return e;
-    }
 
-    public Enquete load(Long id) throws EnqueteNaoEncontradaException {
-	Enquete enquete = this.repository.findOne(id);
-	if (enquete == null) {
-	    throw new EnqueteNaoEncontradaException();
+	public Enquete load(Long id) throws EnqueteNaoEncontradaException {
+		Enquete enquete = this.repository.findOne(id);
+		if (enquete == null) {
+			throw new EnqueteNaoEncontradaException();
+		}
+		return enquete;
 	}
-	return enquete;
-    }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-    public Enquete create(Enquete enquete) throws EnqueteInvalidaException {
-	enquete.validate();
-	return this.repository.save(enquete);
-    }
-
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-    public void delete(Long id) throws EnqueteNaoEncontradaException,
-	    EnqueteAtivaException {
-	Enquete e = load(id);
-	if (e.isActive()) {
-	    throw new EnqueteAtivaException();
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	public Enquete create(Enquete enquete) throws EnqueteInvalidaException {
+		enquete.validate();
+		return this.repository.save(enquete);
 	}
-	this.repository.delete(id);
-    }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-    public int vote(Long enqueteId, String textoOpcao)
-	    throws EnqueteNaoEncontradaException, OpcaoNaoEncontradaException,
-	    EnqueteInativaException {
-	Enquete e = load(enqueteId);
-	Opcao o = e.findOpcaoToVote(textoOpcao);
-	return this.repository.vote(e.getId(), o.getTexto());
-    }
-
-    public Page<Enquete> findActive(String pergunta, Pageable pageable) {
-	if (pergunta == null) {
-	    return this.repository.findActive(pageable);
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	public void delete(Long id) throws EnqueteNaoEncontradaException,
+			EnqueteAtivaException {
+		Enquete e = load(id);
+		if (e.isActive()) {
+			throw new EnqueteAtivaException();
+		}
+		this.repository.delete(id);
 	}
-	return this.repository.findActiveByPerguntaContaining(pergunta,
-		pageable);
-    }
 
-    public Page<Enquete> findFinished(String pergunta, Pageable pageable) {
-	if (pergunta == null) {
-	    return this.repository.findFinished(pageable);
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	public int vote(Long enqueteId, String textoOpcao)
+			throws EnqueteNaoEncontradaException, OpcaoNaoEncontradaException,
+			EnqueteInativaException {
+		Enquete e = load(enqueteId);
+		Opcao o = e.findOpcaoToVote(textoOpcao);
+		return this.repository.vote(e.getId(), o.getTexto());
 	}
-	return this.repository.findFinishedByPerguntaContaining(pergunta,
-		pageable);
-    }
+
+	public Page<Enquete> findActive(String pergunta, Pageable pageable) {
+		if (pergunta == null) {
+			return this.repository.findActive(pageable);
+		}
+		return this.repository.findActiveByPerguntaContaining(pergunta,
+				pageable);
+	}
+
+	public Page<Enquete> findFinished(String pergunta, Pageable pageable) {
+		if (pergunta == null) {
+			return this.repository.findFinished(pageable);
+		}
+		return this.repository.findFinishedByPerguntaContaining(pergunta,
+				pageable);
+	}
+
+	public Page<Enquete> findNotInitialized(String pergunta, Pageable pageable) {
+		if (pergunta == null) {
+			return this.repository.findNotInitialized(pageable);
+		}
+		return this.repository.findNotInitializedByPerguntaContaining(pergunta,
+				pageable);
+	}
 
 }

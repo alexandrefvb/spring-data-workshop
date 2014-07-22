@@ -14,51 +14,51 @@ import br.com.tqi.resource.Resource;
  */
 public class EnqueteResource extends Resource {
 
-    public static final String URI = "enquetes";
+	public static final String URI = "enquetes";
 
-    private Enquete enquete;
+	private Enquete enquete;
 
-    public EnqueteResource(Enquete enquete) {
-	this.enquete = enquete;
-	// Constrói um linkbuilder com /enquetes/{id}
-	LinkBuilder linkBuilder = new LinkBuilder().addPathSegments(URI,
-		enquete.getId());
-	// Cria o link self
-	add(linkBuilder.build());
-	if (enquete.isActive()) {
-	    // Cria o link votar
-	    add(new LinkBuilder().addPathSegments(URI,
-		    enquete.getId().toString(), "voto").withRel("votar")
-		    .withMethod(Method.POST).build());
-	} else {
-	    // Cria o link apagar
-	    add(linkBuilder.withRel("apagar").withMethod(Method.DELETE).build());
-	    if (!enquete.isFinished()) {
-		// Cria o link atualizar
-		add(linkBuilder.withRel("atualizar").withMethod(Method.PUT)
-			.build());
-	    }
+	public EnqueteResource(Enquete enquete) {
+		this.enquete = enquete;
+		// Constrói um linkbuilder com /enquetes/{id}
+		LinkBuilder linkBuilder = new LinkBuilder().addPathSegments(URI,
+				enquete.getId());
+		// Cria o link self
+		add(linkBuilder.build());
+		if (enquete.isActive()) {
+			// Cria o link votar
+			add(new LinkBuilder()
+					.addPathSegments(URI, enquete.getId().toString(), "voto")
+					.withRel("votar").withMethod(Method.POST).build());
+		} else {
+			// Cria o link apagar
+			add(linkBuilder.withRel("apagar").withMethod(Method.DELETE).build());
+			if (!enquete.isFinished()) {
+				// Cria o link atualizar
+				add(linkBuilder.withRel("atualizar").withMethod(Method.PUT)
+						.build());
+			}
+		}
 	}
-    }
 
-    public Long getId() {
-	return enquete.getId();
-    }
+	public Long getId() {
+		return enquete.getId();
+	}
 
-    public String getPergunta() {
-	return enquete.getPergunta();
-    }
+	public String getPergunta() {
+		return enquete.getPergunta();
+	}
 
-    public List<Opcao> getOpcoes() {
-	return enquete.getOpcoes();
-    }
+	public List<Opcao> getOpcoes() {
+		return enquete.getOpcoes();
+	}
 
-    public Date getInicio() {
-	return enquete.getInicio();
-    }
+	public Date getInicio() {
+		return enquete.getInicio();
+	}
 
-    public Date getFim() {
-	return enquete.getFim();
-    }
+	public Date getFim() {
+		return enquete.getFim();
+	}
 
 }
