@@ -36,7 +36,7 @@ public class SpringMVCConfiguration extends WebMvcConfigurerAdapter {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
 				false);
-		objectMapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"));
+		objectMapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy HH:mm"));
 		return objectMapper;
 	}
 }

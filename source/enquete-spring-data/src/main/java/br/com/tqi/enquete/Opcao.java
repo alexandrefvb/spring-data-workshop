@@ -44,7 +44,7 @@ public class Opcao {
 	 * @return Número de votos que a opção possui.
 	 */
 	public Long getVotos() {
-		return (enquete.isFinished()) ? this.votos : null;
+		return (enquete != null && enquete.isFinished()) ? this.votos : null;
 	}
 
 	/**
